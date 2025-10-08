@@ -1,19 +1,48 @@
-# Configuración para pruebas
+# Configuración para entorno de testing
 spring:
-  # Configuración de mail para pruebas (modo mock)
+  # Configuración de base de datos para testing
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: 
+    driver-class-name: org.h2.Driver
+  
+  # Configuración JPA para testing
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+        use_sql_comments: true
+    open-in-view: false
+  
+  # Deshabilitar Flyway para testing
+  flyway:
+    enabled: false
+  
+  # Configuración de mail para testing (modo mock)
   mail:
     host: localhost
     port: 1025
     username: 
     password: 
 
-# Configuración de la aplicación para pruebas
-app:
+# Configuración del servidor para testing
+server:
   port: 0  # Puerto aleatorio para evitar conflictos
+
+# Configuración de la aplicación para testing
+app:
   host: localhost
   environment: test
+  repository:
+    type: ${TEST_REPOSITORY_TYPE:mock}
+    test-type: ${TEST_REPOSITORY_TYPE:mock}
 
-# Configuración de email para pruebas
+# Configuración de email para testing
 email:
   smtp-host: localhost
   smtp-port: 1025
@@ -22,25 +51,18 @@ email:
   from-email: test@spring_boot_api_example.com
   to-emails: test@spring_boot_api_example.com
 
-# Configuración de reportes para pruebas
+# Configuración de reportes para testing
 report:
   channels: log
   subject: Migration Report - API Example (Test)
 
-# Configuración de logging para pruebas
+# Configuración de logging para testing
 logging:
   level:
     com.jps.apiexample: DEBUG
-    org.springframework.web: DEBUG
-    org.springframework.test: DEBUG
+    org.springframework.web: WARN
+    org.springframework.mail: WARN
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
-
-# Configuración de pruebas
-test:
-  base-url: http://localhost
-  path-api: /api/v1
-  timeout: 30000
-  max-retries: 3
-  retry-delay: 1000
-  data-dir: src/test/resources/testdata
