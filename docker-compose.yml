@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  spring_boot_api_example:
+    build: .
+    container_name: spring_boot_api_example
+    ports:
+      - "8082:8080"
+    environment:
+      - APP_ENV=production
+      - PORT=8080
+      - HOST=0.0.0.0
+      - SMTP_HOST=${SMTP_HOST:-smtp.gmail.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - FROM_EMAIL=${FROM_EMAIL}
+      - TO_EMAILS=${TO_EMAILS:-admin@spring_boot_api_example.com}
+      - REPORT_CHANNELS=${REPORT_CHANNELS:-email,log}
+      - REPORT_SUBJECT=${REPORT_SUBJECT:-Migration Report - API Stori (Java)}
+    volumes:
+      - ./reports:/app/reports
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Servicio opcional para desarrollo con base de datos H2
+  h2-console:
+    image: oscarfonts/h2
+    container_name: h2-console
+    ports:
+      - "8082:8082"
+    environment:
+      - H2_OPTIONS=-web -webAllowOthers -tcp -tcpAllowOthers -browser
+    restart: unless-stopped
+    profiles:
+      - dev
