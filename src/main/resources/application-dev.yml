@@ -1,0 +1,40 @@
+# Configuración para entorno de desarrollo
+spring:
+  # Configuración de mail para desarrollo (modo mock)
+  mail:
+    host: localhost
+    port: 1025
+    username: 
+    password: 
+
+# Configuración del servidor para desarrollo
+server:
+  port: 8083
+
+# Configuración de la aplicación para desarrollo
+app:
+  host: localhost
+  environment: development
+
+# Configuración de email para desarrollo
+email:
+  smtp-host: localhost
+  smtp-port: 1025
+  username: 
+  password: 
+  from-email: dev@spring_boot_api_example.com
+  to-emails: dev@spring_boot_api_example.com
+
+# Configuración de reportes para desarrollo
+report:
+  channels: log
+  subject: Migration Report - API Example (Development)
+
+# Configuración de logging para desarrollo
+logging:
+  level:
+    com.jps.apiexample: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.mail: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

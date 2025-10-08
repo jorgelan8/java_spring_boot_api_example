@@ -1,0 +1,53 @@
+# Configuración para entorno de producción
+spring:
+  # Configuración de mail para producción
+  mail:
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          ssl:
+            trust: ${SMTP_HOST}
+
+# Configuración del servidor para producción
+server:
+  port: ${PORT:8080}
+
+# Configuración de la aplicación para producción
+app:
+  host: ${HOST:0.0.0.0}
+  environment: production
+
+# Configuración de email para producción
+email:
+  smtp-host: ${SMTP_HOST}
+  smtp-port: ${SMTP_PORT:587}
+  username: ${SMTP_USERNAME}
+  password: ${SMTP_PASSWORD}
+  from-email: ${FROM_EMAIL}
+  to-emails: ${TO_EMAILS}
+
+# Configuración de reportes para producción
+report:
+  channels: ${REPORT_CHANNELS:email,log}
+  subject: ${REPORT_SUBJECT:Migration Report - API Example}
+
+# Configuración de logging para producción
+logging:
+  level:
+    com.jps.apiexample: INFO
+    org.springframework: WARN
+    org.springframework.mail: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/spring_boot_api_example.log
+    max-size: 10MB
+    max-history: 30

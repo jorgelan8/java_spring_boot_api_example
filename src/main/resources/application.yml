@@ -1,0 +1,65 @@
+# Configuración principal de la aplicación
+spring:
+  application:
+    name: spring_boot_api_example
+  
+  # Configuración del servidor
+  servlet:
+    multipart:
+      max-file-size: 32MB
+      max-request-size: 32MB
+  
+  # Configuración de mail
+  mail:
+    host: ${SMTP_HOST:smtp.gmail.com}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+# Configuración del servidor
+server:
+  port: ${PORT:8080}
+
+# Configuración de la aplicación
+app:
+  host: ${HOST:localhost}
+  environment: ${APP_ENV:development}
+
+# Configuración de email
+email:
+  smtp-host: ${SMTP_HOST:smtp.gmail.com}
+  smtp-port: ${SMTP_PORT:587}
+  username: ${SMTP_USERNAME:}
+  password: ${SMTP_PASSWORD:}
+  from-email: ${FROM_EMAIL:}
+  to-emails: ${TO_EMAILS:admin@spring_boot_api_example.com,notifications@spring_boot_api_example.com}
+
+# Configuración de reportes
+report:
+  channels: ${REPORT_CHANNELS:email,log}
+  subject: ${REPORT_SUBJECT:Migration Report - API Example}
+
+# Configuración de logging
+logging:
+  level:
+    com.jps.apiexample: INFO
+    org.springframework: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Configuración de OpenAPI/Swagger
+springdoc:
+  api-docs:
+    path: /api/v1/swagger.json
+  swagger-ui:
+    path: /api/v1/docs
+    operations-sorter: method
+    tags-sorter: alpha
+    try-it-out-enabled: true

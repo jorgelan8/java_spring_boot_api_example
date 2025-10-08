@@ -1,0 +1,46 @@
+# Configuración para pruebas
+spring:
+  # Configuración de mail para pruebas (modo mock)
+  mail:
+    host: localhost
+    port: 1025
+    username: 
+    password: 
+
+# Configuración de la aplicación para pruebas
+app:
+  port: 0  # Puerto aleatorio para evitar conflictos
+  host: localhost
+  environment: test
+
+# Configuración de email para pruebas
+email:
+  smtp-host: localhost
+  smtp-port: 1025
+  username: 
+  password: 
+  from-email: test@spring_boot_api_example.com
+  to-emails: test@spring_boot_api_example.com
+
+# Configuración de reportes para pruebas
+report:
+  channels: log
+  subject: Migration Report - API Example (Test)
+
+# Configuración de logging para pruebas
+logging:
+  level:
+    com.jps.apiexample: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.test: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Configuración de pruebas
+test:
+  base-url: http://localhost
+  path-api: /api/v1
+  timeout: 30000
+  max-retries: 3
+  retry-delay: 1000
+  data-dir: src/test/resources/testdata
