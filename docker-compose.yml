@@ -1,15 +1,51 @@
 version: '3.8'
 
 services:
+  # Base de datos MySQL para desarrollo y testing
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_api_example
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-root_password}
+      - MYSQL_DATABASE=${DB_NAME:-api_example}
+      - MYSQL_USER=${DB_USERNAME:-api_user}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-api_password}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-root_password}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    profiles:
+      - dev
+      - local
+
   spring_boot_api_example:
     build: .
     container_name: spring_boot_api_example
     ports:
       - "8082:8080"
     environment:
-      - APP_ENV=production
+      - APP_ENV=${APP_ENV:-production}
       - PORT=8080
       - HOST=0.0.0.0
+      # Database configuration
+      - DB_TYPE=${DB_TYPE:-mysql}
+      - DB_HOST=${DB_HOST:-mysql}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_NAME=${DB_NAME:-api_example}
+      - DB_USERNAME=${DB_USERNAME:-api_user}
+      - DB_PASSWORD=${DB_PASSWORD:-api_password}
+      # Repository configuration
+      - APP_REPOSITORY_TYPE=${APP_REPOSITORY_TYPE:-jpa}
+      - TEST_REPOSITORY_TYPE=${TEST_REPOSITORY_TYPE:-mock}
+      # Email configuration
       - SMTP_HOST=${SMTP_HOST:-smtp.gmail.com}
       - SMTP_PORT=${SMTP_PORT:-587}
       - SMTP_USERNAME=${SMTP_USERNAME}
@@ -17,11 +53,14 @@ services:
       - FROM_EMAIL=${FROM_EMAIL}
       - TO_EMAILS=${TO_EMAILS:-admin@spring_boot_api_example.com}
       - REPORT_CHANNELS=${REPORT_CHANNELS:-email,log}
-      - REPORT_SUBJECT=${REPORT_SUBJECT:-Migration Report - API Stori (Java)}
+      - REPORT_SUBJECT=${REPORT_SUBJECT:-Migration Report - API Example (Java)}
     volumes:
       - ./reports:/app/reports
       - ./logs:/app/logs
     restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/health"]
       interval: 30s
@@ -34,9 +73,13 @@ services:
     image: oscarfonts/h2
     container_name: h2-console
     ports:
-      - "8082:8082"
+      - "8083:8082"
     environment:
       - H2_OPTIONS=-web -webAllowOthers -tcp -tcpAllowOthers -browser
     restart: unless-stopped
     profiles:
       - dev
+
+volumes:
+  mysql_data:
+    driver: local
